@@ -1,6 +1,6 @@
 CFLAGS += -Wall -Wextra -Werror -O2 -std=c++17
 LINKFLAGS += 
 
-!cc = |> ^ CC %f^ g++ $(CFLAGS) -c %f -o ./%o |> .build/%B.o
+!cc = |> ^j CC %f^ g++ $(CFLAGS) -c %f -o ./%o |> .build/%B.o
 !link = |> ^ LINK %o^ g++ %f -o %o |> %B
 

@@ -1,8 +1,0 @@
-include_rules
-
-CFLAGS += -Iinclude
-
-: foreach src/*.cpp |> !cc |>
-: .build/*.o |> !link |> .build/noa-bootstrap
-: .build/noa-bootstrap |> cp %f ../../ |> ../../noa-bootstrap
-

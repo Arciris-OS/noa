@@ -1,6 +1,7 @@
-/noa-bootstrap
-/noa
+/bin
 /.tup
+/compile_commands.json
+.cache
 *.o
 *.swp
 *~$

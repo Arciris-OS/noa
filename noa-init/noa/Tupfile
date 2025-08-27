@@ -4,5 +4,5 @@ CFLAGS += -Iinclude
 
 : foreach src/*.cpp |> !cc |>
 : .build/*.o |> !link |> .build/noa
-: .build/noa |> cp %f ../../ |> ../../noa
+: .build/noa |> cp %f ../../bin |> ../../bin/noa
 
