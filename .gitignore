@@ -1,0 +1,9 @@
+/noa-bootstrap
+/noa
+/.tup
+*.o
+*.swp
+*~$
+.build
+
+
