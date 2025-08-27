@@ -8,10 +8,10 @@ void Messages::info(std::string message) {
 }
 
 void Messages::warn(std::string message) {
-	std::cout << "\x1b[33;1* \x1b[0m" << message << std::endl;
+	std::cout << "\x1b[33;1m* \x1b[0m" << message << std::endl;
 }
 
 void Messages::error(std::string message) {
-	std::cout << "\x1b[31;1### \x1b[0m" << message;
+	std::cout << "\x1b[31;1m### \x1b[0m" << message;
 }
 
