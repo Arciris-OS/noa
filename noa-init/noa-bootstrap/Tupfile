@@ -1,8 +1,8 @@
 include_rules
+CC = gcc
+CFLAGS += -Iinclude -std=c99
 
-CFLAGS += -Iinclude -std=c++20
-
-: foreach src/*.cpp |> !cc |>
+: foreach src/*.c |> !cc |> .build/%B.o
 : .build/*.o |> !link |> .build/noa-bootstrap
-: .build/noa-bootstrap |> ^ BIN %f^ cp %f ../../bin |> ../../bin/noa-bootstrap
+: .build/noa-bootstrap |> ^ CP %f -> %o^ cp %f ../../bin |> ../../bin/noa-bootstrap
 
