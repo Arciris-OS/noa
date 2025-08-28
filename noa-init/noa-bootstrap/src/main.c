@@ -24,7 +24,23 @@ bool check_pid_and_root() {
 
 
 int main() {
-	check_pid_and_root();
+	/* if (check_pid_and_root()) */ 
+	/* 	return 1; */
 
-	return 1;
+	info("Mounting directories...\n");
+	if (!mount_dirs()) {
+		error("Mount failed. Enterning to loop...\n");
+		while (1) {
+			pause();
+		}
+
+	}
+
+
+	info("Enterning to Debug loop...\n");
+	while (1) {
+		pause();
+	}
+
+	return 0;
 }

@@ -8,5 +8,5 @@ CC = g++
 endif
 
 !cc = |> ^j CC %f^ $(CC) $(CFLAGS) -c %f -o ./%o |> %B
-!link = |> ^ LINK %o^ g++ %f -o %o |> %B
+!link = |> ^ LINK %o^ g++ $(LINKFLAGS) %f -o %o |> %B
 

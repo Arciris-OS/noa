@@ -1,0 +1,9 @@
+include_rules
+CC = gcc
+CFLAGS += -Iinclude -std=c99
+LINKFLAGS += -static -O2
+
+: foreach src/*.c |> !cc |> .build/%B.o
+: .build/*.o |> !link |> .build/noa-bootinitcpio
+: .build/noa-bootinitcpio |> ^ CP %f -> %o^ cp %f ../../bin |> ../../bin/noa-bootinitcpio
+
