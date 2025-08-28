@@ -11,7 +11,7 @@
 #define VERSION "1.0"
 
 int main() {
-	printf("\x1b[36;1mnoa-initramfs v%s\x1b[0m\n", VERSION);
+	printf("\x1b[32;1mnoa-initcpiofs v%s\x1b[0m\n", VERSION);
 
 	info("Mounting directories...\n");
 	if (!mount_dirs()) {
