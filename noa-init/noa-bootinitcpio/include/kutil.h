@@ -134,7 +134,7 @@ void free_str_array(char **argv) {
 }
 
 
-#endif
+#else
 
 
 
@@ -202,4 +202,5 @@ char **split_whitespace(const char *input);
  */
 void free_str_array(char **arr);
 
+#endif /* KUTIL_IMPL */
 #endif /* _KONOHA_UTIL_H */

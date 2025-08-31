@@ -24,17 +24,18 @@ bool check_pid_and_root() {
 
 
 int main() {
+	info("Welcome to Arciris Linux!");
 	/* if (check_pid_and_root()) */ 
 	/* 	return 1; */
 
-	info("Mounting directories...\n");
-	if (!mount_dirs()) {
-		error("Mount failed. Enterning to loop...\n");
-		while (1) {
-			pause();
-		}
+	/* info("Mounting directories...\n"); */
+	/* if (!mount_dirs()) { */
+	/* 	error("Mount failed. Enterning to loop...\n"); */
+	/* 	while (1) { */
+	/* 		pause(); */
+	/* 	} */
 
-	}
+	/* } */
 
 
 	info("Enterning to Debug loop...\n");
