@@ -59,65 +59,73 @@ int mount_with_loop(const char *image_file, const char *mountpoint, const char *
 	// 利用可能なループデバイスを探す
 	info("Checking avalilable loop device... ");
 	fflush(stdout);
+	struct loop_info64 loopinfo;
 	for (int i = 0; i < 16; i++) {
 		snprintf(loop_device, sizeof(loop_device), "/dev/loop%d", i);
 		loop_fd = open(loop_device, O_RDWR);
 
 		if (loop_fd >= 0) {
-			// ループデバイスが使用されていないかチェック
-			if (ioctl(loop_fd, LOOP_GET_STATUS64, NULL) == -1 && errno == ENXIO) {
+			if (ioctl(loop_fd, LOOP_GET_STATUS64, &loopinfo) == -1 && errno == ENXIO) {
+				// 未使用
 				printf("\x1b[32;1m%s\x1b[0m", loop_device);
 				fflush(stdout);
 				loop_num = i;
-				break;
+				goto found_loop;
+			} else {
+				// どのファイルがアタッチされているか表示
+				char filename[PATH_MAX];
+				memset(filename, 0, sizeof(filename));
+				strncpy(filename, (char*)loopinfo.lo_file_name, sizeof(loopinfo.lo_file_name));
+				printf("\x1b[31;1m%s\x1b[0m(%s) ", loop_device, filename);
+				fflush(stdout);
+				close(loop_fd);
 			}
-			printf("\x1b[31;1m%s\x1b[0m ", loop_device);
-			fflush(stdout);
-			close(loop_fd);
 		}
 	}
-	printf("\n");
+	
+	found_loop:
+		printf("\n");
 
-	if (loop_num == -1) {
-		error(format_string("Loop device not found.\n"));
-		return -1;
-	}
+		if (loop_num == -1) {
+			error(format_string("Loop device not found.\n"));
+			return -1;
+		}
 
-	info(format_string("Using loop device %s\n", loop_device));
+		info(format_string("Using loop device %s\n", loop_device));
 
-	// イメージファイルをオープン
-	int image_fd = open(image_file, O_RDONLY);
-	if (image_fd < 0) {
-		error(format_string("Cannot open image file: %s\n", strerror(errno)));
-		close(loop_fd);
-		return -1;
-	}
+		// イメージファイルをオープン
+		int image_fd = open(image_file, O_RDONLY);
+		if (image_fd < 0) {
+			error(format_string("Cannot open image file: %s\n", strerror(errno)));
+			close(loop_fd);
+			return -1;
+		}
 
-	// ループデバイスにイメージファイルを関連付け
-	if (ioctl(loop_fd, LOOP_SET_FD, image_fd) < 0) {
-		error(format_string("LOOP_SET_FD failed: %s\n", strerror(errno)));
+		// ループデバイスにイメージファイルを関連付け
+		if (ioctl(loop_fd, LOOP_SET_FD, image_fd) < 0) {
+			error(format_string("LOOP_SET_FD failed: %s\n", strerror(errno)));
+			close(image_fd);
+			close(loop_fd);
+			return -1;
+		}
+
 		close(image_fd);
 		close(loop_fd);
-		return -1;
-	}
 
-	close(image_fd);
-	close(loop_fd);
+		info(format_string("Mounting loop device %s...\n", loop_device));
 
-	info(format_string("Mounting loop device %s...\n", loop_device));
+		if (mount(loop_device, mountpoint, fstype, MS_RDONLY, NULL) != 0) {
+			error(format_string("Failed to mount loop device: %s\n", strerror(errno)));
 
-	if (mount(loop_device, mountpoint, fstype, MS_RDONLY, NULL) != 0) {
-		error(format_string("Failed to mount loop device: %s\n", strerror(errno)));
-
-		loop_fd = open(loop_device, O_RDWR);
-		if (loop_fd >= 0) {
-			ioctl(loop_fd, LOOP_CLR_FD, 0);
-			close(loop_fd);
+			loop_fd = open(loop_device, O_RDWR);
+			if (loop_fd >= 0) {
+				ioctl(loop_fd, LOOP_CLR_FD, 0);
+				close(loop_fd);
+			}
+			return -1;
 		}
-		return -1;
-	}
 
-	return 0;
+		return 0;
 }
 
 int switch_root(const char *newroot, const char *init) {
@@ -173,3 +181,16 @@ int switch_root(const char *newroot, const char *init) {
 	return 0;
 }
 
+void free_loop_device(const char *loopdev) {
+    int fd = open(loopdev, O_RDWR);
+    if (fd < 0) {
+        error("open");
+        return;
+    }
+    if (ioctl(fd, LOOP_CLR_FD, 0) < 0) {
+        error("LOOP_CLR_FD");
+    } else {
+		info(format_string("%s freed\n", loopdev));
+    }
+    close(fd);
+}
