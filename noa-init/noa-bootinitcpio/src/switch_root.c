@@ -72,13 +72,14 @@ int mount_with_loop(const char *image_file, const char *mountpoint, const char *
 				loop_num = i;
 				goto found_loop;
 			} else {
-				// どのファイルがアタッチされているか表示
+				// busyなら開放する
 				char filename[PATH_MAX];
 				memset(filename, 0, sizeof(filename));
 				strncpy(filename, (char*)loopinfo.lo_file_name, sizeof(loopinfo.lo_file_name));
 				printf("\x1b[31;1m%s\x1b[0m(%s) ", loop_device, filename);
 				fflush(stdout);
 				close(loop_fd);
+				free_loop_device(loop_device);
 			}
 		}
 	}
