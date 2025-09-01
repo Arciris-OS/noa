@@ -2,7 +2,7 @@ include_rules
 
 CFLAGS += -Iinclude
 
-: foreach src/*.cpp |> !cc |> .build/%B.o
+: foreach src/*.cpp |> !cxx |> .build/%B.o
 : .build/*.o |> !link |> .build/noa
-: .build/noa |> ^ CP %f -> %o^ cp %f ../../bin |> ../../bin/noa
+: .build/noa |> ^ CP 				%f -> %o^ cp %f ../../bin |> ../../bin/noa
 

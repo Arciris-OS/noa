@@ -1,7 +1,6 @@
 #include "kutil.h"
 #define _GNU_SOURCE
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
@@ -75,7 +74,15 @@ int mount_with_loop(const char *image_file, const char *mountpoint, const char *
 				// busyなら開放する
 				char filename[PATH_MAX];
 				memset(filename, 0, sizeof(filename));
-				strncpy(filename, (char*)loopinfo.lo_file_name, sizeof(loopinfo.lo_file_name));
+
+				// コピー先に収まるサイズを指定（LO_NAME_SIZE と PATH_MAX の小さい方）
+				size_t copy_len = sizeof(loopinfo.lo_file_name);
+				if (copy_len > sizeof(filename) - 1) {
+						copy_len = sizeof(filename) - 1;
+				}
+
+				strncpy(filename, (const char*)loopinfo.lo_file_name, copy_len);
+				filename[copy_len] = '\0';
 				printf("\x1b[31;1m%s\x1b[0m(%s) ", loop_device, filename);
 				fflush(stdout);
 				close(loop_fd);

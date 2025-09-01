@@ -7,6 +7,7 @@ else
 CC = g++
 endif
 
-!cc = |> ^j CC %f^ $(CC) $(CFLAGS) -c %f -o ./%o |> %B
-!link = |> ^ LINK %o^ g++ $(LINKFLAGS) %f -o %o |> %B
+!cc = |> ^j CC			%f^ $(CC) $(CFLAGS) -c %f -o ./%o |> %B
+!cxx = |> ^j CXX				%f^ $(CC) $(CFLAGS) -c %f -o ./%o |> %B
+!link = |> ^ LINK			%o^ g++ $(LINKFLAGS) %f -o %o |> %B
 
