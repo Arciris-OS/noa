@@ -30,7 +30,7 @@ void info(const char *restrict __format, ...) {
 	vsnprintf(buf, len + 1, __format, args);
 	va_end(args);
 
-	printf("\x1b[36;1m=> \x1b[0m\t%s", buf);
+	printf("\x1b[36;1m==> \x1b[0m\t%s", buf);
 	free(buf);
 }
 
